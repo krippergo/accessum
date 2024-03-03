@@ -1,0 +1,40 @@
+@import 'variables';
+@import 'header';
+@import 'main';
+@import 'forms';
+@import 'personal';
+@import 'background';
+
+body, a, h1, h2, h3, h4, h5, h6, p {
+	font-family: "Roboto Condensed", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-weight: 400;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	user-select: none;
+}
+
+body, html {
+	min-height: 100vh;
+}
+
+.container {
+	padding: 0px $padding-row-one;
+
+	&.registered {
+		min-height: calc(100vh - $header-height-large);
+		background-color: $light-color;
+	}
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: 0px $padding-row-two;
+	}
+}
+
+.d-none {
+	display: none;
+}

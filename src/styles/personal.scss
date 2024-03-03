@@ -1,0 +1,256 @@
+.personal {
+	min-height: calc(100vh - (($padding-row-one * 2) + $header-height-large));
+	padding: $padding-row-one 0px;
+	display: flex;
+	flex-direction: column;
+
+	.title {
+		font-size: $extralarge-text-size;
+		color: $dark-color;
+	}
+
+	.buttons-container {
+		margin-top: 40px;
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 20px;
+
+		.switch-box {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 4px;
+			width: fit-content;
+			border-radius: $big-radius;
+			background-color: $dark-color;
+		
+			.switch-buttons {
+				padding: 12px 45px;
+				border: none;
+				border-radius: $big-radius;
+				background: none;
+	
+				color: $light-color-oppacity;
+				font-size: $small-text-size;
+		
+				&:hover {
+					cursor: pointer;
+					color: $light-color;
+				}
+			
+				&:focus-visible {
+					color: $light-color;
+					outline: none;
+				}
+	
+				&.active {
+					background-color: $light-color;
+					color: $dark-color;
+				}
+			}
+		}
+
+		.buttons-box {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+		}
+
+		.button {
+			width: fit-content;
+			padding: 14px 24px;
+			border-radius: $big-radius;
+			background-color: $buttons-color;
+			border: none;
+
+			color: $light-color-oppacity;
+			font-size: $small-text-size;
+		
+			&:hover {
+				cursor: pointer;
+				color: $light-color;
+			}
+		
+			&:focus-visible {
+				outline: none;
+				color: $light-color;
+			}
+		}
+	}
+
+	.subtitle {
+		margin-top: 40px;
+		font-size: $medium-text-size;
+		color: $dark-color;
+	}
+
+	.table {
+		margin-top: 34px;
+		border-radius: $small-radius;
+		box-shadow: 1px 4px 4px $shadow-color;
+		flex: 1;
+		overflow-y: auto;
+
+		.header {
+			min-width: fit-content;
+			display: flex;
+			padding: 12px 20px;
+			border-bottom: 1px solid $buttons-color;
+			gap: 12px;
+		}
+
+		.row {
+			min-width: fit-content;
+			display: flex;
+			padding: 12px 20px;
+			gap: 12px;
+		}
+
+		.cell {
+			font-size: $little-text-size;
+
+			&.one {
+				flex: 1;
+				min-width: 140px;
+			}
+			
+			&.two {
+				flex: 2;
+				min-width: 226px;
+			}
+			
+			&.three {
+				flex: 3;
+				min-width: 330px;
+			}
+
+			.button {
+				width: fit-content;
+				padding: 12px 24px;
+				border-radius: $big-radius;
+				background-color: $buttons-color;
+				border: none;
+	
+				color: $light-color-oppacity;
+				font-size: $little-text-size;
+			
+				&:hover {
+					cursor: pointer;
+					color: $light-color;
+				}
+			
+				&:focus-visible {
+					outline: none;
+					color: $light-color;
+				}
+			}
+		}
+	}
+
+	.cards {
+		margin-top: 34px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 26px;
+	
+		.card {
+			flex: auto;
+			padding: 20px;
+			border-radius: $small-radius;
+			box-shadow: 1px 4px 4px $shadow-color;
+	
+			&.flex {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 18px;
+			}
+	
+			.qr {
+				width: 138px;
+				height: 138px;
+			}
+	
+			.card-description {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+			
+			.title {
+				font-size: $small-text-size;
+			}
+			
+			.text {
+				margin-top: 12px;
+				font-size: $little-text-size;
+			}
+			
+			.buttons-box {
+				margin-top: 26px;
+				display: flex;
+				gap: 12px;
+			
+				.button {
+					width: fit-content;
+					padding: 12px 24px;
+					border-radius: $big-radius;
+					background-color: $buttons-color;
+					border: none;
+			
+					color: $light-color-oppacity;
+					font-size: $little-text-size;
+				
+					&:hover {
+						cursor: pointer;
+						color: $light-color;
+					}
+				
+					&:focus-visible {
+						outline: none;
+						color: $light-color;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 1024px) {
+	.table {
+		max-width: 904px;
+	}
+}
+
+@media (max-width: 768px) {
+	.personal {
+		.title {
+			font-size: $large-text-size;
+		}
+	}
+}
+
+@media (max-width: 501px) {
+	.personal {
+		min-height: calc(100vh - (($padding-row-one * 2) + $header-height-small));
+
+		.title {
+			font-size: $big-text-size;
+		}
+
+		.buttons-container {
+			.switch-box {
+				.switch-buttons {
+					padding: 12px 26px;
+					
+					font-size: $little-text-size;
+				}
+			}
+		
+			.button {
+				font-size: $little-text-size;
+			}
+		}
+	}
+}

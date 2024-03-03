@@ -1,0 +1,148 @@
+.forms {
+	padding: 12vh 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.title {
+		font-size: $big-text-size;
+		color: $light-color;
+	}
+
+	.form-container {
+		margin-top: 26px;
+		padding: 10px 40px 42px 40px;
+		background-color: $light-color;
+		border-radius: $big-radius;
+
+		.text {
+			display: inline;
+			font-size: $small-text-size;
+			color:$dark-color-oppacity;
+
+			&:hover {
+				color: $dark-color;
+			}
+		}
+
+		.form-title {
+			font-size: $medium-text-size;
+			margin-top: 24px;
+			margin-bottom: 40px;
+			text-align: center;
+			color: $dark-color;
+		}
+
+		.block {
+			margin-top: 24px;
+	
+			p {
+				font-size: $small-text-size;;
+				display: block;
+				color: $dark-color;
+			}
+
+			.input {
+				width: 376px;
+				height: 48px;
+				margin-top: 10px;
+				border: $buttons-color solid 2px;
+				border-radius: $small-radius;
+				background-color: $light-color;
+				font-size: $small-text-size;
+				color: $dark-color;
+			
+				&:focus-visible {
+					outline-color: $dark-color;
+				}
+
+				&.select {
+					width: 100%;
+					height: 51.2px;
+				}
+			}
+		}
+
+		.error {
+			margin-top: 12px;
+			font-size: $small-text-size;
+			color: rgba(225, 81, 81, 1);
+		}
+
+		.button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 50px;
+			margin-top: 36px;
+			padding: 0px;
+			border-radius: 25px;
+			background-color: $buttons-color;
+			border: none;
+
+			color: $light-color-oppacity;
+			font-size: $small-text-size;
+
+			&:hover {
+				cursor: pointer;
+				color: $light-color;
+			}
+		
+			&:focus-visible {
+				color: $light-color;
+			}
+		}
+	
+		.text-container {
+			margin-top: 10px;
+			text-align: center;
+		}
+	}
+}
+
+@media (max-width: 501px) {
+	.forms {
+		padding: 20px 0px;
+
+		.title {
+			font-size: $medium-text-size;
+		}
+
+		.form-container {
+			width: calc(100vw - 48px);
+			border-radius: 0px;
+			padding: 10px 24px 42px 24px;
+	
+			.text {
+				font-size: $little-text-size;
+			}
+
+			.form-title {
+				font-size: $small-text-size;
+			}
+
+			.block {
+				p {
+					font-size: $little-text-size;
+				}
+		
+				.input {
+					width: calc(100% - 7.2px);
+					height: 42px;
+
+					&.select {
+						width: 100%;
+						height: 49.2px;
+					}
+				}
+			}
+	
+			.button {
+				font-size: $little-text-size;
+			}
+		}
+
+		
+	}
+}

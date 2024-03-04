@@ -3,7 +3,6 @@ import RegistrationForm from '@/components/RegistrationForm.vue';
 import LoginForm from '@/components/LoginForm.vue';
 import EditForm from '@/components/EditForm.vue';
 import AddForm from '@/components/AddForm.vue';
-import RightsForm from '@/components/RightsForm.vue';
 
 export default {
 	data() {
@@ -14,7 +13,6 @@ export default {
 		LoginForm,
 		EditForm,
 		AddForm,
-		RightsForm
 	},
 	methods: {
 		isNotRegistered() {
@@ -39,7 +37,6 @@ export default {
 			<LoginForm v-if="$route.name == 'login'" />
 			<EditForm v-if="$route.name == 'edit'" />
 			<AddForm v-if="$route.name == 'add'" />
-			<RightsForm v-if="$route.name == 'rights'" />
 		</div>
 	</main>
 </template>

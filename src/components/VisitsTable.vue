@@ -1,18 +1,31 @@
 <script>
+import axios from 'axios';
+
 export default {
-    data() {
-        return {};
-    },
-    methods: {
-		goVisits(id) {
+	data() {
+		return {};
+	},
+	methods: {
+		goVisitors() {
 			this.$router.push({
-				path: '/visits/' + id
+				name: 'visitors'
+			});
+		},
+		goPoints() {
+			this.$router.push({
+				name: 'points'
 			});
 		}
 	}
 }
 </script>
 <template>
+	<div class="buttons-container">
+		<div class="switch-box">
+			<button class="switch-buttons" @click="goVisitors">Посетители</button>
+			<button class="switch-buttons" @click="goPoints">Точки</button>
+		</div>
+	</div>
 	<h3 class="subtitle">Таблица посещений Иванов Иван Иванович</h3>
 	<div class="table">
 		<header class="header">

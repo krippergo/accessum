@@ -13,7 +13,7 @@ export default {
 			evt.preventDefault();
 
 			if(this.name.length > 0) {
-				const response = await axios.post('/point/add', {
+				const response = await axios.post('/points/add', {
 					name: this.name
 				});
 

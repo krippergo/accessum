@@ -43,11 +43,6 @@ export default createRouter({
 			component: FormsPage
 		},
 		{
-			path: '/rights',
-			name: 'rights',
-			component: FormsPage
-		},
-		{
 			path: '/visitors',
 			name: 'visitors',
 			component: PersonalPage
@@ -58,7 +53,7 @@ export default createRouter({
 			component: PersonalPage
 		},
 		{
-			path: '/points/id/checkpoints',
+			path: '/checkpoints/:id/:point',
 			name: 'checkpoints',
 			component: PersonalPage
 		},

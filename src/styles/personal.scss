@@ -51,12 +51,6 @@
 			}
 		}
 
-		.buttons-box {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12px;
-		}
-
 		.button {
 			width: fit-content;
 			padding: 14px 24px;
@@ -82,6 +76,12 @@
 	.subtitle {
 		margin-top: 40px;
 		font-size: $medium-text-size;
+		color: $dark-color;
+	}
+
+	.msg {
+		margin-top: 14px;
+		font-size: $small-text-size;
 		color: $dark-color;
 	}
 
@@ -144,6 +144,10 @@
 					outline: none;
 					color: $light-color;
 				}
+
+				&.delete {
+					background-color: $warning-color;
+				}
 			}
 		}
 	}
@@ -163,7 +167,6 @@
 			&.flex {
 				display: flex;
 				flex-wrap: wrap;
-				align-items: center;
 				gap: 18px;
 			}
 	
@@ -172,7 +175,7 @@
 				height: 138px;
 			}
 	
-			.card-description {
+			.description {
 				display: flex;
 				flex-direction: column;
 				justify-content: space-between;
@@ -191,6 +194,7 @@
 				margin-top: 26px;
 				display: flex;
 				gap: 12px;
+				flex-wrap: wrap;
 			
 				.button {
 					width: fit-content;
@@ -210,6 +214,10 @@
 					&:focus-visible {
 						outline: none;
 						color: $light-color;
+					}
+
+					&.delete {
+						background-color: $warning-color;
 					}
 				}
 			}
@@ -250,6 +258,14 @@
 		
 			.button {
 				font-size: $little-text-size;
+			}
+		}
+
+		.cards {
+			.buttons-box {
+				.button {
+					flex: 1;
+				}
 			}
 		}
 	}

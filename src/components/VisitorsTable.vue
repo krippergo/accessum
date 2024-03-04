@@ -1,48 +1,71 @@
 <script>
+import axios from 'axios';
+
 export default {
-    data() {
-        return {};
-    },
-    methods: {
-		goVisits(id) {
+	data() {
+		return {
+			username: '',
+			opened: true,
+			text: ''
+		};
+	},
+	mounted() {
+		this.loadAccount();
+	},
+	methods: {
+		goVisitors() {
 			this.$router.push({
-				path: '/visits/' + id
+				name: 'visitors'
 			});
+		},
+		goPoints() {
+			this.$router.push({
+				name: 'points'
+			});
+		},
+		async rights() {
+			await axios.get('/account/rights');
+
+			this.loadAccount();
+		},
+		async loadAccount() {
+			const response = await axios.get('/account');
+
+			if(response.data.code == 0) {
+				this.username = response.data.msg.username;
+				this.opened = response.data.msg.is_opened;
+
+				if(this.opened)
+					this.text = 'Только правообладателям';
+				else
+					this.text = 'Вход всем'
+			}
 		}
 	}
 }
 </script>
 <template>
+	<div class="buttons-container">
+		<div class="switch-box">
+			<button class="switch-buttons active" @click="goVisitors">Посетители</button>
+			<button class="switch-buttons" @click="goPoints">Точки</button>
+		</div>
+		<button class="button" @click="rights" v-if="$route.name == 'visitors'">{{ text }}</button>
+	</div>
 	<h3 class="subtitle">Таблица посетителей</h3>
 	<div class="table">
 		<header class="header">
 			<div class="cell two">ФИО</div>
 			<div class="cell one">Роль</div>
 			<div class="cell three">Точки</div>
-			<div class="cell one">Посещения</div>
+			<div class="cell one">Права</div>
 		</header>
 		<div class="row">
 			<div class="cell two">Иванов Иван Иванович</div>
-			<div class="cell one">Сотрудник</div>
+			<div class="cell one">Правообладатель</div>
 			<div class="cell three">КВАНТОРИУМ63;</div>
 			<div class="cell one">
-				<button class="button" @click="goVisits('id')">Посмотреть</button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="cell two">Петров Пётр Петрович</div>
-			<div class="cell one">Посетитель</div>
-			<div class="cell three">КВАНТОРИУМ63;</div>
-			<div class="cell one">
-				<button class="button" @click="goVisits('id')">Посмотреть</button>
-			</div>
-		</div>
-		<div class="row">
-			<div class="cell two">Васильев Василий Васильевич</div>
-			<div class="cell one">Посетитель</div>
-			<div class="cell three">КВАНТОРИУМ63;</div>
-			<div class="cell one">
-				<button class="button" @click="goVisits('id')">Посмотреть</button>
+				<button class="button delete">Забрать</button>
 			</div>
 		</div>
 	</div>

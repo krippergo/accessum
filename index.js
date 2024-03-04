@@ -21,6 +21,10 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/accessum');
 
 // const visitSchema = new mongoose.Schema({
+// 	creator_login: {
+// 		type: String,
+// 		required: true
+// 	},
 // 	day: {
 // 		type: Date,
 // 		required: true
@@ -37,31 +41,22 @@ mongoose.connect('mongodb://127.0.0.1:27017/accessum');
 
 // const Visit =  mongoose.model('visit', visitSchema);
 
-// const pointSchema = new mongoose.Schema({
-// 	name: {
-// 		type: String,
-// 		required: true
-// 	},
-// 	visits: {
-// 		type: mongoose.ObjectId,
-// 		ref: 'point'
-// 	}
-// });
+const sessionSchema = new mongoose.Schema({
+	login: {
+		type: String,
+		required: true
+	},
+	createdAt: {
+		type: Date,
+		required: true
+	},
+	expiresAt: {
+		type: Date,
+		required: true
+	}
+});
 
-// const Point =  mongoose.model('point', pointSchema);
-
-// const connectionSchema = new mongoose.Schema({
-// 	type: {
-// 		type: String,
-// 		required: true
-// 	},
-// 	points: {
-// 		type: mongoose.ObjectId,
-// 		ref: 'point'
-// 	}
-// });
-
-// const Connection =  mongoose.model('connection', connectionSchema);
+const Session =  mongoose.model('session', sessionSchema);
 
 const accountSchema = new mongoose.Schema({
 	login: {
@@ -85,30 +80,45 @@ const accountSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	connections: {
-		type: mongoose.ObjectId,
-		ref: 'connection'
+	is_opened: {
+		type: Boolean,
+		default: true
+	},
+	accounts_access: {
+		type: [String],
+		default: []
 	}
 });
 
 const Account = mongoose.model('account', accountSchema);
 
-const sessionSchema = new mongoose.Schema({
-	login: {
+const pointSchema = new mongoose.Schema({
+	name: {
 		type: String,
 		required: true
 	},
-	createdAt: {
-		type: Date,
-		required: true
-	},
-	expiresAt: {
-		type: Date,
-		required: true
+	account_id: {
+		type: mongoose.ObjectId,
+		ref: 'account'
 	}
+},
+{
+	timestamps: true
 });
 
-const Session =  mongoose.model('session', sessionSchema);
+const Point =  mongoose.model('point', pointSchema);
+
+const checkpointSchema = new mongoose.Schema({
+	point_id: {
+		type: mongoose.ObjectId,
+		ref: 'point'
+	}
+},
+{
+	timestamps: true
+});
+
+const Checkpoint =  mongoose.model('checkpoint', checkpointSchema);
 
 const { createHmac } = require('node:crypto');
 
@@ -236,6 +246,76 @@ app.get('/account/authorized', async function(req, res) {
 	res.send({ code: 0, msg: '' }).status(200).end();
 });
 
+app.get('/account/rights', async function(req, res) {
+	if (!req.cookies) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	account.is_opened = !account.is_opened;
+
+	await account.save();
+
+	res.send({ code: 0, msg: '' }).status(200).end();
+});
+
+app.get('/account', async function(req, res) {
+	if (!req.cookies) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	account.password = '';
+
+	res.send({ code: 0, msg: account }).status(200).end();
+});
+
 app.post('/account/edit', async function (req, res) {
 	const { password, newpassword } = req.body;
 
@@ -286,52 +366,414 @@ app.post('/account/edit', async function (req, res) {
 
 app.post('/account/exit', async function(req, res) {
 	if (!req.cookies) {
-		res.status(401).end();
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
 		return;
 	}
 
 	const sessionToken = req.cookies['session_token'];
 	if (!sessionToken) {
-		res.status(401).end();
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
 		return;
 	}
 
 	res.cookie('session_token', '', { expires: new Date(), httpOnly: true, use_only_cookies: true });
-	res.status(200).end();
+	res.send({ code: 0, msg: '' }).status(200).end();
 });
 
+app.post('/points/add', async function (req, res) {
+	const { name } = req.body;
 
+	if (!name) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
 
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
 
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
 
-// app.get('/account/points', async function(req, res) {
-// 	if (!req.cookies) {
-// 		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
-// 		return;
-// 	}
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
 
-// 	const sessionToken = req.cookies['session_token'];
-// 	if (!sessionToken) {
-// 		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
-// 		return;
-// 	}
+	const account = await Account.findOne({ login: userSession.login });
+	if(!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
 
-// 	const userSession = await Session.findOne({ _id: sessionToken });
-// 	if (!userSession) {
-// 		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
-// 		return;
-// 	}
+	const newPoint = new Point({
+		name: name,
+		account_id: account.id
+	});
 
-// 	if (!userSession.login) {
-// 		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
-// 		return;
-// 	}
+	await newPoint.save();
 
-// 	const account = await Account.findOne({ login: userSession.login });
-// 	if (!account) {
-// 		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
-// 		return;
-// 	}
+	res.send({ code: 0, msg: '' }).status(200).end();
+});
 
-// 	res.send(account).status(200).end();
-// });
+app.get('/points/get', async function(req, res) {
+	if (!req.cookies) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	let response = {
+		owner: [],
+		available: []
+	};
+
+	const ownerPoints = await Point.find({ account_id: account.id }).sort({ updatedAt: -1 });
+	if(!ownerPoints) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	response.owner = ownerPoints;
+
+	let account_ids = [];
+
+	const accounts = await Account.find({ login: { $in: account.accounts_access } });
+	if(!accounts) {
+		response.available = [];
+	} else {
+		accounts.forEach((item) => {
+			account_ids.push(item.id);
+		});
+
+		const availablePoints = await Point.find({ account_id: { $in: account_ids } }).sort({ updatedAt: -1 });
+		if(!availablePoints) {
+			res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+			return;
+		}
+
+		availablePoints.forEach((item) => {
+			response.available.push(item);
+		});
+	}
+
+	if(response.owner.length == 0 && response.available.length == 0) {
+		res.send({ code: 4, msg: 'Список пуст' }).status(401).end();
+		return;
+	}
+
+	res.send({ code: 0, msg: response }).status(200).end();
+});
+
+app.get('/points/delete', async function(req, res) {
+	const { id } = req.query;
+
+	if (!req.cookies || !id) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	await Point.deleteOne({ _id: id, account_id: account.id });
+
+	res.send({ code: 0, msg: '' }).status(200).end();
+});
+
+app.get('/checkpoints/add', async function(req, res) {
+	const { id } = req.query;
+
+	if (!req.cookies || !id) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	let available = [];
+
+	const ownerPoints = await Point.find({ account_id: account.id });
+	if(!ownerPoints) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	ownerPoints.forEach((item) => {
+		available.push(item.id);
+	});
+
+	let account_ids = [];
+
+	const accounts = await Account.find({ login: { $in: account.accounts_access } });
+	if(accounts) {
+		accounts.forEach((item) => {
+			account_ids.push(item.id);
+		});
+
+		const availablePoints = await Point.find({ account_id: { $in: account_ids } });
+		if(!availablePoints) {
+			res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+			return;
+		}
+
+		availablePoints.forEach((item) => {
+			available.push(item.id);
+		});
+	}
+
+	if(available == 0) {
+		res.send({ code: 4, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	if(!available.includes(id)) {
+		res.send({ code: 1, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	const newCheckpoint = new Checkpoint({
+		point_id: id
+	});
+
+	await newCheckpoint.save();
+
+	res.send({ code: 0, msg: '' }).status(200).end();
+});
+
+app.get('/checkpoints/get', async function(req, res) {
+	const { id } = req.query;
+
+	if (!req.cookies || !id) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	let available = [];
+
+	const ownerPoints = await Point.find({ account_id: account.id });
+	if(!ownerPoints) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	ownerPoints.forEach((item) => {
+		available.push(item.id);
+	});
+
+	let account_ids = [];
+
+	const accounts = await Account.find({ login: { $in: account.accounts_access } });
+	if(accounts) {
+		accounts.forEach((item) => {
+			account_ids.push(item.id);
+		});
+
+		const availablePoints = await Point.find({ account_id: { $in: account_ids } });
+		if(!availablePoints) {
+			res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+			return;
+		}
+
+		availablePoints.forEach((item) => {
+			available.push(item.id);
+		});
+	}
+
+	if(available.length == 0) {
+		res.send({ code: 5, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	if(!available.includes(id)) {
+		res.send({ code: 5, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	const checkpoints = await Checkpoint.find({ point_id: id }).sort({ updatedAt: -1 }).populate('point_id');
+	if(!checkpoints) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if(checkpoints.length == 0) {
+		res.send({ code: 4, msg: 'Список пуст' }).status(401).end();
+		return;
+	}
+
+	res.send({ code: 0, msg: checkpoints }).status(200).end();
+});
+
+app.get('/checkpoints/delete', async function(req, res) {
+	const { id } = req.query;
+
+	if (!req.cookies || !id) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const sessionToken = req.cookies['session_token'];
+	if (!sessionToken) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const userSession = await Session.findOne({ _id: sessionToken });
+	if (!userSession) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if (!userSession.login) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	const account = await Account.findOne({ login: userSession.login });
+	if (!account) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	let available = [];
+
+	const ownerPoints = await Point.find({ account_id: account.id });
+	if(!ownerPoints) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	ownerPoints.forEach((item) => {
+		available.push(item.id);
+	});
+
+	let account_ids = [];
+
+	const accounts = await Account.find({ login: { $in: account.accounts_access } });
+	if(accounts) {
+		accounts.forEach((item) => {
+			account_ids.push(item.id);
+		});
+
+		const availablePoints = await Point.find({ account_id: { $in: account_ids } });
+		if(!availablePoints) {
+			res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+			return;
+		}
+
+		availablePoints.forEach((item) => {
+			available.push(item.id);
+		});
+	}
+
+	if(available.length == 0) {
+		res.send({ code: 5, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	const checkpoint = await Checkpoint.findOne({ _id: id });
+	if(!checkpoint) {
+		res.send({ code: 1, msg: 'Ошибка сервера' }).status(401).end();
+		return;
+	}
+
+	if(!available.includes(String(checkpoint.point_id))) {
+		res.send({ code: 5, msg: 'Ошибка доступа' }).status(401).end();
+		return;
+	}
+
+	await Checkpoint.deleteOne({ _id: id });
+
+	res.send({ code: 0, msg: '' }).status(200).end();
+});

@@ -24,6 +24,14 @@ export default {
 				name: 'points'
 			});
 		},
+		goCheckpoint(id) {
+			this.$router.push({
+				name: 'checkpoint',
+				params: {
+					id: id
+				}
+			});
+		},
 		async loadCheckpoints(){
 			if(this.$route.params.id) {
 				const response = await axios.get('/checkpoints/get', {
@@ -78,11 +86,11 @@ export default {
 	<p class="msg">{{ msg }}</p>
 	<div class="cards">
 		<div class="card flex" v-for="item in checkpoints">
-			<img src="@/assets/qrcode.png" class="qr" alt="QR-код">
+			<img :src="item.qr_url" class="qr" alt="QR-код">
 			<div class="description">
 				<h4 class="title">{{ item._id }}</h4>
 				<div class="buttons-box">
-					<button class="button">Развернуть</button>
+					<button class="button" @click="goCheckpoint(item._id)">Развернуть</button>
 					<button class="button">Открыть</button>
 					<button class="button delete" @click="deleteCheckpoint(item._id)">Удалить</button>
 				</div>

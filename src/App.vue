@@ -11,7 +11,8 @@ export default {
 				this.$route.name == 'registration' ||
 				this.$route.name == 'edit' ||
 				this.$route.name == 'add' ||
-				this.$route.name == 'rights'
+				this.$route.name == 'rights' ||
+				this.$route.name == 'checkpoint'
 			)
 				return true;
 			else
@@ -36,7 +37,7 @@ export default {
 	<div class="container" :class="{'registered': isRegistered()}">
 		<RouterView />
 	</div>
-	<AppBg />
+	<AppBg v-if="$route.name != 'checkpoint'" />
 </template>
 
 <style>

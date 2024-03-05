@@ -5,6 +5,7 @@ import MainPage from './views/MainPage.vue';
 import FormsPage from './views/FormsPage.vue';
 import PersonalPage from './views/PersonalPage.vue';
 import EbsPage from './views/EbsPage.vue';
+import CheckpointPage from './views/CheckpointPage.vue';
 
 export default createRouter({
 	// История переходов сохраняется
@@ -58,6 +59,11 @@ export default createRouter({
 			component: PersonalPage
 		},
 		{
+			path: '/checkpoint/:id',
+			name: 'checkpoint',
+			component: CheckpointPage
+		},
+		{
 			path: '/visits/id',
 			name: 'visits',
 			component: PersonalPage
@@ -66,6 +72,11 @@ export default createRouter({
 			path: '/ebs',
 			name: 'ebs',
 			component: EbsPage
+		},
+		{
+			path: '/open/:id',
+			name: 'open',
+			component: PersonalPage
 		},
 		{
 			path: '/:catchAll(.*)',

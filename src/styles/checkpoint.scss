@@ -1,0 +1,62 @@
+.checkpoint {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+
+    .img-box {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .description-box {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+
+        .title {
+            color: #000000;
+            font-size: $extralarge-text-size;
+        }
+
+        .button {
+            width: 100%;
+            padding: 14px 0px;
+            border-radius: $big-radius;
+            background-color: $buttons-color;
+            border: none;
+    
+            color: $light-color-oppacity;
+            font-size: $small-text-size;
+        
+            &:hover {
+                cursor: pointer;
+                color: $light-color;
+            }
+        
+            &:focus-visible {
+                outline: none;
+                color: $light-color;
+            }
+        }
+    }
+}
+
+@media (max-width: 501px) {
+	.checkpoint {
+        .description-box {
+            .title {
+                font-size: $large-text-size;
+            }
+        }
+    }
+}

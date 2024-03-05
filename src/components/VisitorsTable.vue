@@ -9,9 +9,6 @@ export default {
 			text: ''
 		};
 	},
-	mounted() {
-		this.loadAccount();
-	},
 	methods: {
 		goVisitors() {
 			this.$router.push({
@@ -24,16 +21,16 @@ export default {
 			});
 		},
 		async rights() {
-			await axios.get('/account/rights');
+			await axios.put('/server/account/opened');
 
 			this.loadAccount();
 		},
 		async loadAccount() {
-			const response = await axios.get('/account');
+			const response = await axios.get('/server/account/data');
 
-			if(response.data.code == 0) {
-				this.username = response.data.msg.username;
-				this.opened = response.data.msg.is_opened;
+			if(response.status == 200) {
+				this.username = response.data.username;
+				this.opened = response.data.opened;
 
 				if(this.opened)
 					this.text = 'Только правообладателям';
@@ -41,6 +38,9 @@ export default {
 					this.text = 'Вход всем'
 			}
 		}
+	},
+	mounted() {
+		this.loadAccount();
 	}
 }
 </script>

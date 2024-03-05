@@ -17,12 +17,12 @@ export default {
 			if(this.password.length > 0 && this.newpassword.length > 0 && this.verification.length > 0) {
 				if(this.newpassword.length >= 8) {
 					if(this.newpassword == this.verification) {
-						const response = await axios.post('/account/edit', {
+						const response = await axios.post('/server/account/edit', {
 							password: this.password,
 							newpassword: this.newpassword
 						});
 
-						if(response.data.code == 0) {
+						if(response.status == 200) {
 							this.password = '';
 							this.newpassword = '';
 							this.verification = '';
@@ -31,7 +31,7 @@ export default {
 								name: 'visitors'
 							});
 						} else {
-							this.errmsg = response.data.msg;
+							this.errmsg = response.data;
 						}
 					} else {
 						this.errmsg = 'Пароли не совпадают'
@@ -43,18 +43,18 @@ export default {
 				this.errmsg = 'Заполните все поля!'
 			}
 		},
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code != 0) {
+			if(response.status != 200) {
 				this.$router.push({
 					name: 'business'
 				});
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 	}
 }
 </script>

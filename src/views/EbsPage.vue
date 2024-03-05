@@ -3,18 +3,18 @@ import axios from 'axios';
 
 export default {
 	methods: {
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code != 0) {
+			if(response.status != 200) {
 				this.$router.push({
 					name: 'business'
 				});
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 	}
 }
 </script>

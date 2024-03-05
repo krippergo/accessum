@@ -21,18 +21,18 @@ export default {
 				name: 'registration'
 			});
 		},
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code == 0) {
+			if(response.status == 200) {
 				this.$router.push({
 					name: 'visitors'
 				});
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 	}
 }
 </script>

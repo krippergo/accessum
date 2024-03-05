@@ -7,10 +7,16 @@ export default {
 			checkpoint: {}
 		};
 	},
-	mounted() {
-		this.loadCheckpoint();
-	},
 	methods: {
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
+
+			if(response.status != 200) {
+				this.$router.push({
+					name: 'business'
+				});
+			}
+		},
 		async loadCheckpoint() {
 			if(this.$route.params.id) {
 				const response = await axios.get('/checkpoint/get', {
@@ -26,6 +32,10 @@ export default {
 				}
 			}
 		},
+	},
+	mounted() {
+		this.authentication();
+		this.loadCheckpoint();
 	}
 }
 </script>

@@ -25,7 +25,7 @@ export default {
 		async accountExit() {
 			this.accountSettings();
 
-			await axios.post('/account/exit');
+			await axios.get('/server/account/exit');
 
 			this.$router.push({
 				name: 'business'

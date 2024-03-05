@@ -18,25 +18,25 @@ export default {
 		CheckpointsCards
 	},
 	methods: {
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code != 0) {
+			if(response.status != 200) {
 				this.$router.push({
 					name: 'business'
 				});
 			}
 		},
 		async loadAccount() {
-			const response = await axios.get('/account');
+			const response = await axios.get('/server/account/data');
 
-			if(response.data.code == 0) {
-				this.username = response.data.msg.username;
+			if(response.status == 200) {
+				this.username = response.data.username;
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 		this.loadAccount();
 	}
 }

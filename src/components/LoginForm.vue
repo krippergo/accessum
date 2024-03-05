@@ -14,12 +14,12 @@ export default {
 			evt.preventDefault();
 
 			if(this.login.length > 0 && this.password.length > 0) {
-				const response = await axios.post('/account/authorization', {
+				const response = await axios.post('/server/account/authorization', {
 					login: this.login,
 					password: this.password
 				});
 
-				if(response.data.code == 0) {
+				if(response.status == 200) {
 					this.login = '';
 					this.password = '';
 
@@ -27,24 +27,24 @@ export default {
 						name: 'visitors'
 					});
 				} else {
-					this.errmsg = response.data.msg;
+					this.errmsg = response.data;
 				}
 			} else {
 				this.errmsg = 'Заполните все поля!'
 			}
 		},
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code == 0) {
+			if(response.status == 200) {
 				this.$router.push({
 					name: 'visitors'
 				});
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 	}
 }
 </script>

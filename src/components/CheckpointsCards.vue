@@ -10,9 +10,6 @@ export default {
 			username: ''
 		};
 	},
-	mounted() {
-		this.loadCheckpoints();
-	},
 	methods: {
 		goVisitors() {
 			this.$router.push({
@@ -34,13 +31,13 @@ export default {
 		},
 		async loadCheckpoints(){
 			if(this.$route.params.id) {
-				const response = await axios.get('/checkpoints/get', {
+				const response = await axios.get('/server/checkpoints/data', {
 					params: {
 						id: this.$route.params.id
 					}
 				});
 				
-				if(response.data.code == 0) {
+				if(response.data.ok) {
 					this.checkpoints = response.data.msg;
 					this.msg = '';
 				} else {
@@ -53,7 +50,7 @@ export default {
 		},
 		async addCheckpoint() {
 			if(this.$route.params.id) {
-				await axios.get('/checkpoints/add', {
+				await axios.get('/server/checkpoints/create', {
 					params: {
 						id: this.$route.params.id
 					}
@@ -63,7 +60,7 @@ export default {
 			}
 		},
 		async deleteCheckpoint(id) {
-			await axios.get('/checkpoints/delete', {
+			await axios.delete('/server/checkpoints/delete', {
 				params: {
 					id: id
 				}
@@ -71,6 +68,9 @@ export default {
 			
 			this.loadCheckpoints();
 		}
+	},
+	mounted() {
+		this.loadCheckpoints();
 	}
 }
 </script>

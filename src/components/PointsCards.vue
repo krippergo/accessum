@@ -9,9 +9,6 @@ export default {
 			msg: ''
 		};
 	},
-	mounted() {
-		this.loadPoints();
-	},
 	methods: {
 		goAdd() {
 			this.$router.push({
@@ -43,9 +40,9 @@ export default {
 			});
 		},
 		async loadPoints() {
-			const response = await axios.get('/points/get');
+			const response = await axios.get('/server/points/data');
 
-			if(response.data.code == 0) {
+			if(response.data.ok) {
 				this.pointsOwner = response.data.msg.owner;
 				this.pointsAvailable = response.data.msg.available;
 				this.msg = '';
@@ -56,7 +53,7 @@ export default {
 			}
 		},
 		async deletePoint(point_id) {
-			await axios.get('/points/delete', {
+			await axios.delete('/server/points/delete', {
 				params: {
 					id: point_id
 				}
@@ -64,6 +61,9 @@ export default {
 
 			this.loadPoints();
 		}
+	},
+	mounted() {
+		this.loadPoints();
 	}
 }
 </script>

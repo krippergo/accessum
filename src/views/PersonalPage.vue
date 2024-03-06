@@ -21,7 +21,7 @@ export default {
 		async authentication() {
 			const response = await axios.get('/server/account/authentication');
 
-			if(response.status != 200) {
+			if(!response.data.ok) {
 				this.$router.push({
 					name: 'business'
 				});
@@ -30,8 +30,8 @@ export default {
 		async loadAccount() {
 			const response = await axios.get('/server/account/data');
 
-			if(response.status == 200) {
-				this.username = response.data.username;
+			if(response.data.ok) {
+				this.username = response.data.msg.username;
 			}
 		}
 	},

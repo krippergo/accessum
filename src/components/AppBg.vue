@@ -30,8 +30,8 @@ export default {
 </script>
 <template>
 	<div class="background" :class="{'not-full': isRegistered()}">
-		<img src="@/assets/business.png" class="background-image" :class="{'d-none': isNot()}">
-		<img src="@/assets/home.png" class="background-image" v-if="$route.name == 'home'">
+		<img src="@/assets/business.jpg" class="background-image" :class="{'d-none': isNot()}">
+		<img src="@/assets/home.jpg" class="background-image" v-if="$route.name == 'home'">
 		<div class="gradient" :class="{'d-none': !isNot()}"></div>
 	</div>
 </template>

@@ -8,7 +8,7 @@ export default {
 			password: '',
 			verification: '',
 			fio: '',
-			type: '',
+			type: this.$route.params.type,
 			username: '',
 			errmsg: ''
 		}
@@ -17,7 +17,21 @@ export default {
 		async registartion(evt) {
 			evt.preventDefault();
 
-			if(this.login.length > 0 && this.password.length > 0 && this.verification.length > 0 && this.fio.length > 0 && this.type.length > 0 && this.username.length > 0) {
+			if(
+				this.login.length > 0 &&
+				this.password.length > 0 &&
+				this.verification.length > 0 &&
+				this.fio.length > 0 &&
+				this.type.length > 0 &&
+				this.username.length > 0 &&
+				(
+					this.type == 'home' ||
+					this.type == 'business' ||
+					this.type == 'neurobusiness' ||
+					this.type == 'ebsbusiness' ||
+					this.type == 'businessplus'
+				)
+			) {
 				if(this.password.length >= 8) {
 					if(this.password == this.verification) {
 						const response = await axios.post('/server/account/registration', {
@@ -28,19 +42,19 @@ export default {
 							username: this.username
 						});
 
-						if(response.status == 200) {
+						if(response.data.ok) {
 							this.login = '';
 							this.password = '';
 							this.verification = '';
 							this.fio = '';
-							this.type = '';
+							this.type = this.$route.params.type;
 							this.username = '';
 
 							this.$router.push({
 								name: 'visitors'
 							});
 						} else {
-							this.errmsg = response.data;
+							this.errmsg = response.data.msg;
 						}
 					} else {
 						this.errmsg = 'Пароли не совпадают'
@@ -55,7 +69,7 @@ export default {
 		async authentication() {
 			const response = await axios.get('/server/account/authentication');
 
-			if(response.status == 200) {
+			if(response.data.ok) {
 				this.$router.push({
 					name: 'visitors'
 				});
@@ -93,15 +107,11 @@ export default {
 		<div class="block">
 			<p>Тип аккаунта</p>
 			<select class="input select" v-model="type">
-				<option v-for="item in [
-					{ value: 'home', text: 'Домашний'},
-					{ value: 'business', text: 'Бизнес'},
-					{ value: 'neurobusiness', text: 'Бизнес с нейросетями'},
-					{ value: 'ebsbusiness', text: 'Бизнес с ЕБС'},
-					{ value: 'businesplus', text: 'Бизнес всё включено'}
-				]" :value="item.value">
-					{{ item.text }}
-				</option>
+				<option value="home">Домашний</option>
+				<option value="business">Бизнес</option>
+				<option value="neurobusiness">Бизнес с нейросетями</option>
+				<option value="ebsbusiness">Бизнес с ЕБС</option>
+				<option value="businessplus">Бизнес всё включено</option>
 			</select>
 		</div>
 		<div class="block">

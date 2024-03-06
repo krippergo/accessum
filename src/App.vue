@@ -1,7 +1,9 @@
 <script>
 import AppBg from './components/AppBg.vue'
 import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
 import { RouterView } from 'vue-router'
+import TarifsBlock from './components/TarifsBlock.vue'
 
 export default {
 	methods: {
@@ -11,7 +13,6 @@ export default {
 				this.$route.name == 'registration' ||
 				this.$route.name == 'edit' ||
 				this.$route.name == 'add' ||
-				this.$route.name == 'rights' ||
 				this.$route.name == 'checkpoint'
 			)
 				return true;
@@ -27,16 +28,20 @@ export default {
 	},
 	components: {
 		AppHeader,
-		AppBg
+		AppBg,
+		AppFooter,
+		TarifsBlock
 	}
 }
 </script>
 
 <template>
-	<AppHeader :class="{'d-none': isNot()}"/>
-	<div class="container" :class="{'registered': isRegistered()}">
+	<AppHeader :class="{ 'd-none': isNot() }" />
+	<div class="container" :class="{ 'registered': isRegistered() }">
 		<RouterView />
 	</div>
+	<TarifsBlock :class="{ 'd-none': isNot() || isRegistered() }" />
+	<AppFooter :class="{ 'd-none': isNot() || isRegistered() }" />
 	<AppBg v-if="$route.name != 'checkpoint'" />
 </template>
 

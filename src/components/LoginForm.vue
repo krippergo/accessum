@@ -19,7 +19,7 @@ export default {
 					password: this.password
 				});
 
-				if(response.status == 200) {
+				if(response.data.ok) {
 					this.login = '';
 					this.password = '';
 
@@ -27,7 +27,7 @@ export default {
 						name: 'visitors'
 					});
 				} else {
-					this.errmsg = response.data;
+					this.errmsg = response.data.msg;
 				}
 			} else {
 				this.errmsg = 'Заполните все поля!'
@@ -36,7 +36,7 @@ export default {
 		async authentication() {
 			const response = await axios.get('/server/account/authentication');
 
-			if(response.status == 200) {
+			if(response.data.ok) {
 				this.$router.push({
 					name: 'visitors'
 				});
@@ -66,7 +66,7 @@ export default {
 		<p class="error">{{ errmsg }}</p>
 		<button class="button">Войти</button>
 		<div class="text-container">
-			<router-link to="/registration">
+			<router-link to="/registration/home">
 				<p class="text">Зарегистрироваться</p>
 			</router-link>
 		</div>

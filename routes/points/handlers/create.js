@@ -1,6 +1,14 @@
+const { Point } = require('../../../database/database');
 const authentication = (cookies) => require('../../../functions/authentication')(cookies);
 
 module.exports = async (req, res) => {
+	const { name } = req.body;
+
+	if (!name) {
+		res.send({ ok: false, msg: 'Неверный запрос' }).end();
+		return;
+	}
+
 	const auth = await authentication(req.cookies);
 
 	if (!auth.verified) {
@@ -8,9 +16,12 @@ module.exports = async (req, res) => {
 		return;
 	}
 
-	auth.data.opened = !auth.data.opened;
+	const point = new Point({
+		name: name,
+		account_id: auth.data.id
+	});
 
-	await auth.data.save();
+	await point.save();
 
 	res.send({ ok: true, msg: '' }).end();
 };

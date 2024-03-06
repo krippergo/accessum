@@ -1,0 +1,24 @@
+.footer {
+	display: flex;
+	padding: 20px $padding-row-one;
+	background-color: $dark-color;
+
+	.title {
+		font-size: $big-text-size;
+		color: $light-color;
+	}
+}
+
+@media (max-width: 768px) {
+	.footer {
+		padding: 20px $padding-row-two;
+	}
+}
+
+@media (max-width: 501px) {
+	.footer {
+		.title {
+			font-size: $medium-text-size;
+		}
+	}
+}

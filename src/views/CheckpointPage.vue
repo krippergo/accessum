@@ -11,7 +11,7 @@ export default {
 		async authentication() {
 			const response = await axios.get('/server/account/authentication');
 
-			if(response.status != 200) {
+			if(!response.data.ok) {
 				this.$router.push({
 					name: 'business'
 				});
@@ -19,13 +19,13 @@ export default {
 		},
 		async loadCheckpoint() {
 			if(this.$route.params.id) {
-				const response = await axios.get('/checkpoint/get', {
+				const response = await axios.get('/server/checkpoints/get', {
 					params: {
 						id: this.$route.params.id
 					}
 				});
 				
-				if(response.data.code == 0) {
+				if(response.data.ok) {
 					this.checkpoint = response.data.msg;
 				} else {
 					this.$router.back();

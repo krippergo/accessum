@@ -4,7 +4,9 @@ import axios from 'axios';
 export default {
 	data() {
 		return {
-			settingsIsOpen: false
+			settingsIsOpen: false,
+			ebs: false,
+			network: false
 		}
 	},
 	methods: {
@@ -30,7 +32,27 @@ export default {
 			this.$router.push({
 				name: 'business'
 			});
+		},
+		async loadAccount() {
+			const response = await axios.get('/server/account/data');
+
+			if(response.data.ok) {
+				if(response.data.msg.type == 'ebsbusiness' || response.data.msg.type == 'businessplus') {
+					this.ebs = true;
+				} else {
+					this.ebs = false;
+				}
+
+				if(response.data.msg.type == 'neuralbusiness' || response.data.msg.type == 'businessplus') {
+					this.network = true;
+				} else {
+					this.network = false;
+				}
+			}
 		}
+	},
+	mounted() {
+		this.loadAccount();
 	}
 }
 </script>
@@ -50,12 +72,12 @@ export default {
 					<p>Изменить пароль</p>
 				</div>
 			</router-link>
-			<a href="https://colab.research.google.com/drive/14D9Avl0kkGa5OhzhUNu_4ssLmblGCo7C?usp=sharing" target="_blank" rel="noopener noreferrer">
+			<a href="https://colab.research.google.com/drive/14D9Avl0kkGa5OhzhUNu_4ssLmblGCo7C?usp=sharing" target="_blank" rel="noopener noreferrer" v-if="network">
 				<div class="settings-text" @click="accountSettings">
 					<p>Нейросеть</p>
 				</div>
 			</a>
-			<router-link to="/ebs">
+			<router-link to="/ebs" v-if="ebs">
 				<div class="settings-text" @click="accountSettings">
 					<p>ЕБС</p>
 				</div>

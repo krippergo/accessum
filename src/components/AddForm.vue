@@ -13,11 +13,11 @@ export default {
 			evt.preventDefault();
 
 			if(this.name.length > 0) {
-				const response = await axios.post('/points/add', {
+				const response = await axios.post('/server/points/create', {
 					name: this.name
 				});
 
-				if(response.data.code == 0) {
+				if(response.data.ok) {
 					this.name = '';
 
 					this.$router.push({
@@ -30,18 +30,18 @@ export default {
 				this.errmsg = 'Заполните все поля!'
 			}
 		},
-		async isAuthorized() {
-			const response = await axios.get('/account/authorized');
+		async authentication() {
+			const response = await axios.get('/server/account/authentication');
 
-			if(response.data.code != 0) {
+			if(!response.data.ok) {
 				this.$router.push({
 					name: 'business'
 				});
 			}
 		}
 	},
-	beforeMount() {
-		this.isAuthorized();
+	mounted() {
+		this.authentication();
 	}
 }
 </script>

@@ -29,7 +29,7 @@ export default createRouter({
 			component: FormsPage
 		},
 		{
-			path: '/registration',
+			path: '/registration/:type',
 			name: 'registration',
 			component: FormsPage
 		},

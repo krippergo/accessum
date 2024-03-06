@@ -1,24 +1,17 @@
 const { Account, Session } = require('../../../database/database');
+const accountGet = (requipment) => require('../../../functions/accountGet')(requipment);
 
 module.exports = async (req, res, hash) => {
 	const { login, password, fio, type, username } = req.body;
 
 	if (!login || !password || !fio || !username || !type) {
-		res.status(400).end();
+		res.send({ ok: false, msg: 'Неверный запрос' }).end();
 		return;
 	}
 
-	let account;
-	try {
-		account = await Account.findOne({ login: session.login });
-		if(!account) {
-			res.status(401).end();
-			return;
-		}
-	}
-	catch(error) {
-		console.log(error);
-		res.send('Такой логин уже существует').status(401).end();
+	const account = await accountGet({ login: login });
+	if(account.verified) {
+		res.send({ ok: false, msg: 'Такой логин уже существует' }).end();
 		return;
 	}
 
@@ -45,5 +38,5 @@ module.exports = async (req, res, hash) => {
 
 	await session.save();
 
-	res.cookie('session_token', session.id, { expires: expiresAt, httpOnly: true, use_only_cookies: true }).status(200).end();
+	res.cookie('session_token', session.id, { expires: expiresAt, httpOnly: true, use_only_cookies: true }).send({ ok: true, msg: '' }).end();
 };

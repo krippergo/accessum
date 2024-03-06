@@ -28,9 +28,9 @@ export default {
 		async loadAccount() {
 			const response = await axios.get('/server/account/data');
 
-			if(response.status == 200) {
-				this.username = response.data.username;
-				this.opened = response.data.opened;
+			if(response.data.ok) {
+				this.username = response.data.msg.username;
+				this.opened = response.data.msg.opened;
 
 				if(this.opened)
 					this.text = 'Только правообладателям';

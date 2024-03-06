@@ -22,7 +22,7 @@ export default {
 							newpassword: this.newpassword
 						});
 
-						if(response.status == 200) {
+						if(response.data.ok) {
 							this.password = '';
 							this.newpassword = '';
 							this.verification = '';
@@ -31,7 +31,7 @@ export default {
 								name: 'visitors'
 							});
 						} else {
-							this.errmsg = response.data;
+							this.errmsg = response.data.msg;
 						}
 					} else {
 						this.errmsg = 'Пароли не совпадают'
@@ -46,7 +46,7 @@ export default {
 		async authentication() {
 			const response = await axios.get('/server/account/authentication');
 
-			if(response.status != 200) {
+			if(!response.data.ok) {
 				this.$router.push({
 					name: 'business'
 				});

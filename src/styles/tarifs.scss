@@ -1,0 +1,89 @@
+.tarifs {
+	background-color: $light-color;
+	padding: 36px $padding-row-one;
+
+	.tarifs-title {
+		font-size: $extralarge-text-size;
+		color: $dark-color;
+	}
+
+	.businesess {
+		justify-content: center;
+		margin-top: 20px;
+		display: flex;
+		gap: 26px;
+		flex-wrap: wrap;
+
+		.card {
+			padding: 20px;
+			border-radius: $small-radius;
+			box-shadow: 1px 4px 4px $shadow-color;
+	
+			.image {
+				width: 174.49px;
+				height: 174.49px;
+				object-fit: cover;
+			}
+			
+			.card-title {
+				margin-top: 10px;
+				font-size: $small-text-size;
+				color: $dark-color;
+			}
+			
+			.button {
+				margin-top: 10px;
+				width: fit-content;
+				padding: 12px 42px;
+				border-radius: $big-radius;
+				background-color: $buttons-color;
+				border: none;
+		
+				color: $light-color-oppacity;
+				font-size: $little-text-size;
+			
+				&:hover {
+					cursor: pointer;
+					color: $light-color;
+				}
+			
+				&:focus-visible {
+					outline: none;
+					color: $light-color;
+				}
+
+				&.delete {
+					background-color: $warning-color;
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: 768px) {
+	.tarifs {
+		left: -20px;
+		right: -20px;
+		padding: 26px $padding-row-two;
+
+		.tarifs-title {
+			font-size: $large-text-size;
+		}
+	}
+}
+
+@media (max-width: 501px) {
+	.tarifs {
+		.tarifs-title {
+			font-size: $big-text-size;
+		}
+
+		.businesess {
+			.card {
+				.button {
+					font-size: $little-text-size;
+				}
+			}
+		}
+	}
+}
